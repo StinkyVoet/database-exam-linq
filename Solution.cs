@@ -27,7 +27,7 @@ class Solution
     {
         //List down all FoodItems including the Category ordered by a Customer (CustomerID given as parameter)
 
-        var fooditems = db.Orders.Where(o => o.CustomerID.Equals(customerId)).Select(o => o.FoodItem);
+        var fooditems = db.Orders.Where(o => o.CustomerID.Equals(customerId)).Select(o => o.FoodItem).Include(f => f.category);
 
         List<DishAndCategory> dishes = new();
         foreach (var fooditem in fooditems)
@@ -43,8 +43,23 @@ class Solution
         //List down the bills: FoodItems, Order Quantity, Unit Price, Total,
         //for the first "number" of Customers (ordered based on Total). 
         //Return an Iqueryable<CustomerBill> which will let fetch exactly the "number" of bills
+        var orders = db.Orders.Take(number).Include(o => o.Customer).Include(o => o.FoodItem);
 
-        return default(IQueryable<CustomerBill>); //change this line (it is now only used to avoid compiler error)  
+        List<CustomerBill> bills = new();
+        foreach (var order in orders)
+        {
+            List<BillItem> billItems = new();
+            bills.Add(new CustomerBill()
+            {
+                CustomerID = order.CustomerID,
+                Bill = new List<BillItem>
+                {
+
+                }
+            });
+        }
+
+        return bills.AsQueryable(); //change this line (it is now only used to avoid compiler error)  
     }
 
     public static IQueryable<Dish> Q4(ExamContext db, int tableNumber)

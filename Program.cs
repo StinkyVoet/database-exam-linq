@@ -15,6 +15,7 @@ class Program
             var minPrice = 1.5m + rand.Next(0, 5);
             var maxPrice = 28.5m;
             var res = Solution.Q1(context, "m", minPrice, maxPrice)?.ToList();
+            var res2 = Solution.Q2(context, 3)?.ToList();
 
             /*
             switch (args[1])

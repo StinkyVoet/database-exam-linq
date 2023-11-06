@@ -11,7 +11,7 @@ class Solution
     public static IQueryable<Dish> Q1(ExamContext db, string name, decimal minPrice, decimal maxPrice)
     {
         //List down all FoodItems containing the given name within the minimum and maximum prices given
-        var fooditems = db.FoodItems.Where(e => e.Name.ToLower().Contains(name)).Where(e => e.Price >= minPrice).Where(e => e.Price <= maxPrice);
+        var fooditems = db.FoodItems.Where(e => e.Name.ToLower().Contains(name.ToLower())).Where(e => e.Price >= minPrice).Where(e => e.Price <= maxPrice);
 
         List<Dish> dishes = new();
         foreach (var fooditem in fooditems)

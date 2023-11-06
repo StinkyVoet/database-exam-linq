@@ -1,6 +1,8 @@
-
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using DataFormats;
+using Microsoft.EntityFrameworkCore;
 
 class Solution
 {
@@ -9,8 +11,14 @@ class Solution
     public static IQueryable<Dish> Q1(ExamContext db, string name, decimal minPrice, decimal maxPrice)
     {
         //List down all FoodItems containing the given name within the minimum and maximum prices given
+        var fooditems = db.FoodItems.Where(e => e.Name.Contains(name)).Where(e => e.Price >= minPrice).Where(e => e.Price <= maxPrice);
 
-        return default(IQueryable<Dish>);  //change this line (it is now only used to avoid compiler error)         
+        List<Dish> dishes = new();
+        foreach (var fooditem in fooditems)
+        {
+            dishes.Add(new Dish(fooditem.Name, fooditem.Price, fooditem.Unit));
+        }
+        return dishes.AsQueryable();  //change this line (it is now only used to avoid compiler error)         
     }
 
     //In DataFormats -> DishAndCategory
@@ -19,7 +27,14 @@ class Solution
     {
         //List down all FoodItems including the Category ordered by a Customer (CustomerID given as parameter)
 
-        return default(IQueryable<DishAndCategory>);  //change this line (it is now only used to avoid compiler error)  
+        var fooditems = db.Orders.Where(o => o.CustomerID.Equals(customerId)).Select(o => o.FoodItem);
+
+        List<DishAndCategory> dishes = new();
+        foreach (var fooditem in fooditems)
+        {
+            dishes.Add(new DishAndCategory(fooditem.Name, fooditem.Price, fooditem.Unit, fooditem.category?.Name));
+        }
+        return dishes.AsQueryable();  //change this line (it is now only used to avoid compiler error)  
     }
 
     //In DataFormats -> CustomerBill (BillItem)
@@ -68,6 +83,21 @@ class Solution
         //   customer two -> order3{customer2, firstCategory product3}; order4{customer2, secondCategory product4}
         //One or both given categories might NOT exist, in this case make sure an order is not placed, 
         //the two customers should be added anyways. 
+
+        var newCustomers = new List<Customer>() {
+            new() { Name="John", TableNumber=3, DateTime=DateTime.Now },
+            new() { Name="Jane", TableNumber=3, DateTime=DateTime.Now }
+        };
+
+        db.Customers.AddRange(newCustomers);
+
+        foreach (var customer in newCustomers)
+        {
+
+        }
+
+
+        db.SaveChanges();
 
         return default(int); //change this line (it is now only used to avoid compiler error)  
     }
